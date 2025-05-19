@@ -14,6 +14,29 @@
     <script>
         async function some_api(myForm) {
             // ここにコードを書く
+            const city = myForm.form_data.value;
+            const apiKey = "YOUR_API_KEY";
+            const endpoint = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+            try {
+                const response = await fetch(endpoint);
+                const data = await response.json();
+
+                if (data.cod === 200) {
+                    const weatherInfo = `
+                        <b>${data.name}の天気</b><br>
+                        気温: ${data.main.temp}℃<br>
+                        湿度: ${data.main.humidity}%<br>
+                        天気: ${data.weather[0].description}<br><br>
+                    `;
+                    document.getElementById("result").innerHTML += weatherInfo;
+                } else {
+                    document.getElementById("result").innerHTML += "エラー: " + data.message + "<br><br>";
+                }
+            } catch (error) {
+                document.getElementById("result").innerHTML += "エラーが発生しました。<br><br>";
+                console.error(error);
+            }
             document.getElementById("result").innerHTML += myForm.form_data.value+"<br />";
             document.apiform.reset();
         }
